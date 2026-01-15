@@ -55,13 +55,14 @@ func main() {
 
 		// Protected Routes
 		protected := api.Group("/user")
-		protected.Use(middleware.AuthMiddleware())
+		protected.Use(middleware.AuthMiddleware(userService))
 		{
 			protected.GET("/profile", userHandler.Profile)
+			protected.POST("/logout", userHandler.Logout)
 		}
 
 		library := api.Group("/library")
-		library.Use(middleware.AuthMiddleware())
+		library.Use(middleware.AuthMiddleware(userService))
 		{
 			library.POST("/books", bookHandler.Create)
 			library.GET("/books", bookHandler.List)

@@ -15,6 +15,8 @@ import (
 type UserService interface {
 	Register(email, password string) error
 	Login(email, password string) (string, error)
+	Logout(tokenString string) error
+	CheckBlacklist(tokenString string) bool
 }
 
 type userService struct {
@@ -56,4 +58,28 @@ func (s *userService) Login(email, password string) (string, error) {
 	})
 
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+}
+
+func (s *userService) Logout(tokenString string) error {
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return errors.New("invalid token claims")
+	}
+
+	exp, ok := claims["exp"].(float64)
+	if !ok {
+		return errors.New("invalid expiration in token")
+	}
+	expiresAt := time.Unix(int64(exp), 0)
+
+	return s.repo.AddToBlacklist(tokenString, expiresAt)
+}
+
+func (s *userService) CheckBlacklist(tokenString string) bool {
+	return s.repo.IsTokenBlacklisted(tokenString)
 }

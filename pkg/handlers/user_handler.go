@@ -3,6 +3,7 @@ package handlers
 import (
 	"books/pkg/services"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -54,4 +55,23 @@ func (h *UserHandler) Login(c *gin.Context) {
 func (h *UserHandler) Profile(c *gin.Context) {
 	// If middleware passes, user is authenticated
 	c.JSON(http.StatusOK, gin.H{"message": "Welcome to your secret profile"})
+}
+
+func (h *UserHandler) Logout(c *gin.Context) {
+	// Get token from header
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token required"})
+		return
+	}
+
+	tokenString := strings.Split(authHeader, " ")[1]
+
+	// Call Service
+	if err := h.service.Logout(tokenString); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Logout failed"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 }
