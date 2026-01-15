@@ -24,7 +24,6 @@ func NewBookHandler(service services.BookService) *BookHandler {
 type CreateBookInput struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
-	ISBN        string `json:"isbn" binding:"required"`
 	AuthorID    uint   `json:"author_id" binding:"required"`
 	PublisherID uint   `json:"publisher_id" binding:"required"`
 }
@@ -39,7 +38,6 @@ func (h *BookHandler) Create(c *gin.Context) {
 	book := models.Book{
 		Title:       input.Title,
 		Description: input.Description,
-		ISBN:        input.ISBN,
 		AuthorID:    input.AuthorID,
 		PublisherID: input.PublisherID,
 	}

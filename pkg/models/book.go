@@ -23,7 +23,6 @@ type Book struct {
 	ID          uint   `gorm:"primaryKey" json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	ISBN        string `gorm:"unique" json:"isbn"`
 
 	// Foreign Keys
 	AuthorID    uint `json:"author_id"`

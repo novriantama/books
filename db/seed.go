@@ -54,28 +54,25 @@ func Seed(db *gorm.DB) {
 		{
 			Title:       "Harry Potter and the Philosopher's Stone",
 			Description: "A young wizard discovers his magical heritage.",
-			ISBN:        "9780747532743",
 			AuthorID:    authors[0].ID,    // J.K. Rowling
 			PublisherID: publishers[0].ID, // Bloomsbury
 		},
 		{
 			Title:       "A Game of Thrones",
 			Description: "Noble families fight for control of the Iron Throne.",
-			ISBN:        "9780553103540",
 			AuthorID:    authors[1].ID,    // George R.R. Martin
 			PublisherID: publishers[1].ID, // Bantam Books
 		},
 		{
 			Title:       "The Hobbit",
 			Description: "Bilbo Baggins goes on an adventure.",
-			ISBN:        "9780048230019",
 			AuthorID:    authors[2].ID,    // J.R.R. Tolkien
 			PublisherID: publishers[2].ID, // Allen & Unwin
 		},
 	}
 
 	for _, book := range books {
-		if err := db.FirstOrCreate(&book, models.Book{ISBN: book.ISBN}).Error; err != nil {
+		if err := db.FirstOrCreate(&book, models.Book{Title: book.Title}).Error; err != nil {
 			log.Println("Failed to seed book:", err)
 		}
 	}
